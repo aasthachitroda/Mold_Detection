@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 # Load YOLOv5 model
 MODEL_PATH = "runs/train/FoodMold/weights/best.pt"  
-model = torch.hub.load('ultralytics/yolov5', 'custom', path=MODEL_PATH, force_reload=True)
+model = torch.hub.load('ultralytics/yolov5', 'custom', path=MODEL_PATH, force_reload=True, trust_repo=True)
 
 # Define allowed image formats
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
@@ -51,4 +51,5 @@ def predict():
     return jsonify(response)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))  
+    app.run(host='0.0.0.0', port=port, debug=True)
