@@ -23,10 +23,12 @@ certifi==2022.12.7
 cffi==1.17.1
 chardet==3.0.4
 charset-normalizer==3.4.1
+chroma-hnswlib==0.7.6
 chromadb==0.4.18
 click==8.1.7
 coloredlogs==15.0.1
 comm==0.2.2
+conda==23.3.1
 contourpy==1.2.0
 cycler==0.12.1
 Cython==3.0.9
@@ -70,6 +72,7 @@ google-auth==2.23.4
 google-pasta==0.2.0
 google_images_download==2.8.0
 googleapis-common-protos==1.61.0
+googletrans==3.0.0
 gpt-index==0.8.42
 greenlet==3.0.1
 grpcio==1.59.3
@@ -180,7 +183,7 @@ pdfminer.six==20221105
 pdfplumber==0.10.3
 pexpect==4.9.0
 pikepdf==8.8.0
-pillow==11.1.0
+pillow==10.3.0
 platformdirs==3.5.0
 pluggy==1.5.0
 portalocker==2.8.2
@@ -305,5 +308,3 @@ XlsxWriter==3.1.9
 yarl==1.9.3
 zipp==3.17.0
 zstandard==0.19.0
-chroma-hnswlib
-deep-translator
