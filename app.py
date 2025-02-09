@@ -1,56 +1,51 @@
+from flask import Flask, request, jsonify
 import torch
-import flask
-import os
 import cv2
 import numpy as np
-from flask import Flask, request, jsonify
-from werkzeug.utils import secure_filename
-import torch
+from PIL import Image
+import io
 
-# Initialize Flask app
+# Initialize Flask App
 app = Flask(__name__)
 
-# Load YOLOv5 model
-MODEL_PATH = "best.pt" 
-model = torch.hub.load('ultralytics/yolov5', 'custom', path=MODEL_PATH, source='local')
+# Load YOLOv5 Model
+MODEL_PATH = "best.pt"
+model = torch.hub.load("ultralytics/yolov5", "custom", path=MODEL_PATH, force_reload=True)
 
-# Define allowed image formats
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+@app.route("/", methods=["GET"])
+def home():
+    return "Mold Detection API is running!"
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/predict', methods=['POST'])
+@app.route("/predict", methods=["POST"])
 def predict():
-    if 'file' not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
-    
-    file = request.files['file']
-    if file.filename == '' or not allowed_file(file.filename):
-        return jsonify({"error": "Invalid file format"}), 400
-    
-    filename = secure_filename(file.filename)
-    file_path = os.path.join("uploads", filename)
-    
-    os.makedirs("uploads", exist_ok=True)
-    file.save(file_path)
+    try:
+        # Check if an image is provided
+        if "file" not in request.files:
+            return jsonify({"error": "No file provided"}), 400
 
-    # Load and process image
-    img = cv2.imread(file_path)
-    results = model(img)
+        # Read Image
+        file = request.files["file"]
+        image = Image.open(io.BytesIO(file.read())).convert("RGB")
 
-    # Parse results
-    detections = results.pandas().xyxy[0]  
-    mold_detected = not detections.empty  
-    
-    response = {
-        "filename": filename,
-        "mold_detected": mold_detected,
-        "detections": detections.to_dict(orient="records")  
-    }
+        # Convert image to OpenCV format
+        image = np.array(image)
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    return jsonify(response)
+        # Perform inference using YOLOv5
+        results = model(image)
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  
-    app.run(host='0.0.0.0', port=port, debug=False)
+        # Parse Results
+        detections = results.pandas().xyxy[0]  # Get results as DataFrame
+        mold_detected = not detections.empty  # True if mold is detected
+
+        return jsonify({
+            "mold_detected": mold_detected,
+            "detections": detections.to_dict(orient="records")
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Run Flask Server
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
