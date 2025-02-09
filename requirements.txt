@@ -4,7 +4,7 @@ opencv-python
 numpy
 pandas
 werkzeug
-ultralytics
-
+ultralytics==8.0.40
 gitpython>=3.1.30
 setuptools>=70.0.0
+torchvision

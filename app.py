@@ -5,14 +5,14 @@ import cv2
 import numpy as np
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
-from ultralytics import YOLO
+import torch
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Load YOLOv5 model
 MODEL_PATH = "best.pt" 
-model = YOLO(MODEL_PATH) 
+model = torch.hub.load('ultralytics/yolov5', 'custom', path=MODEL_PATH, source='local')
 
 # Define allowed image formats
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
