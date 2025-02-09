@@ -4,13 +4,23 @@ import cv2
 import numpy as np
 from PIL import Image
 import io
+import os
+from dotenv import load_dotenv
 
 # Initialize Flask App
 app = Flask(__name__)
 
+os.environ["GITHUB_TOKEN"] = os.getenv("GITHUB_TOKEN")
+
 # Load YOLOv5 Model
 MODEL_PATH = "best.pt"
-model = torch.hub.load("ultralytics/yolov5", "custom", path=MODEL_PATH, force_reload=True)
+model = torch.hub.load(
+    "ultralytics/yolov5",
+    "custom",
+    path=MODEL_PATH,
+    force_reload=True,
+    trust_repo=True
+)
 
 @app.route("/", methods=["GET"])
 def home():
