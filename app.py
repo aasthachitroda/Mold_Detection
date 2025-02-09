@@ -14,6 +14,12 @@ os.environ["GITHUB_TOKEN"] = os.getenv("GITHUB_TOKEN")
 
 # Load YOLOv5 Model
 MODEL_PATH = "best.pt"
+
+# ✅ Check if best.pt exists
+if not os.path.exists(MODEL_PATH):
+    raise FileNotFoundError("❌ Model file 'best.pt' not found! Make sure it is uploaded to Render.")
+
+
 model = torch.hub.load(
     "ultralytics/yolov5",
     "custom",
